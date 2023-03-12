@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: arbitrage-db
+    environment:
+      POSTGRES_DB: "arbitrage"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
+    ports:
+      - "5433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  arbitrage:
+    container_name: arbitrage-app
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "80:8080"
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  db_network:
+    driver: bridge
