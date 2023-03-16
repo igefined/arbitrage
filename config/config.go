@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	Name string `config:"APP_NAME"`
-	Port uint   `config:"PORT"`
+	Name  string `config:"APP_NAME"`
+	Port  uint   `config:"PORT"`
+	DBUrl string `config:"DB_URL"`
 }
 
 func New() *Config {
