@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/igilgyrg/arbitrage/internal/integration/providers"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
 func (c *client) Ping(ctx context.Context) (err error) {
-	resp, err := providers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, "/api/v3/ping", nil)
+	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, "/api/v3/ping", nil)
 	if err != nil {
 		err = fmt.Errorf("binance ping: %v", err)
 

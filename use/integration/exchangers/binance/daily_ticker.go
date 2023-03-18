@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/igilgyrg/arbitrage/internal/domain"
-	"github.com/igilgyrg/arbitrage/internal/integration/providers"
+	"github.com/igilgyrg/arbitrage/use/domain"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	symbol = fmt.Sprintf("%s%s", symbol, providers.SymbolStableCoin)
 	query := fmt.Sprintf("%s?symbol=%s", "api/v3/ticker/24hr", symbol)
-	resp, err := providers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
+	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
 	if err != nil {
 		err = fmt.Errorf("binance daily ticker request: %v", err)
 
@@ -30,7 +29,7 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 
 		switch errResp.Code {
 		case -1121:
-			err = fmt.Errorf("binance daily ticker: %w", providers.ErrSymbolNotFound)
+			err = fmt.Errorf("binance daily ticker: %w", exchangers.ErrSymbolNotFound)
 		default:
 			err = fmt.Errorf("binance daily ticker error response: %v", errResp)
 		}

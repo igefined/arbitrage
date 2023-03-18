@@ -6,7 +6,8 @@ import (
 	"github.com/igilgyrg/arbitrage/config"
 	"github.com/igilgyrg/arbitrage/log"
 	"github.com/igilgyrg/arbitrage/schema"
-
+	"github.com/igilgyrg/arbitrage/use"
+	"github.com/igilgyrg/arbitrage/use/service/inspector"
 	"go.uber.org/fx"
 )
 
@@ -15,15 +16,20 @@ func main() {
 	cfg := config.New()
 
 	app := fx.New(
-		fx.Supply(logger, cfg),
+		fx.Supply(logger, cfg, inspector.DefaultExchangers(logger)),
 
 		fx.Provide(
 			schema.New,
 			api.NewServer,
 			endpoints.New,
+			use.NewComposite,
 		),
 
-		fx.Invoke(func(_ *api.Server) {}),
+		use.Constructor(),
+
+		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder) {
+			schema.Migrate(logger, &schema.DB, qb.ConnString())
+		}),
 	)
 
 	app.Run()

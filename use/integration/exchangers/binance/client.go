@@ -4,9 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/igilgyrg/arbitrage/internal/integration/providers"
 	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
+
+const ExchangeName = "binance"
 
 type (
 	client struct {
@@ -17,9 +19,9 @@ type (
 	}
 )
 
-func New(logger *log.Logger) providers.Client {
+func New(logger *log.Logger) exchangers.Client {
 	httpClient := &http.Client{
-		Timeout: providers.ProvTimeoutSec * time.Second,
+		Timeout: exchangers.ProvTimeoutSec * time.Second,
 	}
 
 	hosts := []string{
@@ -31,4 +33,8 @@ func New(logger *log.Logger) providers.Client {
 	}
 
 	return &client{httpClient: httpClient, hosts: hosts, logger: logger}
+}
+
+func (c *client) Name() string {
+	return ExchangeName
 }

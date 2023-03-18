@@ -3,7 +3,7 @@ package bybit
 import (
 	"strconv"
 
-	"github.com/igilgyrg/arbitrage/internal/domain"
+	"github.com/igilgyrg/arbitrage/use/domain"
 )
 
 type (

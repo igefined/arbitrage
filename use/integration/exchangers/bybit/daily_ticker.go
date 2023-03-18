@@ -6,14 +6,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/igilgyrg/arbitrage/internal/domain"
-	"github.com/igilgyrg/arbitrage/internal/integration/providers"
+	"github.com/igilgyrg/arbitrage/use/domain"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
-func (c client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	symbol = fmt.Sprintf("%s%s", symbol, providers.SymbolStableCoin)
+func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
 	query := fmt.Sprintf("%s?symbol=%s&category=spot", "v5/market/tickers", symbol)
-	resp, err := providers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
+	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
 	if err != nil {
 		err = fmt.Errorf("bybit daily ticker request: %v", err)
 
@@ -37,7 +36,7 @@ func (c client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.
 	if response.Code != 0 {
 		switch response.Code {
 		case 10001:
-			err = fmt.Errorf("bybit daily ticker: %w", providers.ErrSymbolNotFound)
+			err = fmt.Errorf("bybit daily ticker: %w", exchangers.ErrSymbolNotFound)
 		default:
 			err = fmt.Errorf("bybit daily ticker error response: %s", response.Message)
 		}
@@ -65,7 +64,7 @@ func (c client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.
 	}
 
 	if len(tickerResponse.List) == 0 {
-		err = fmt.Errorf("bybit daily ticker: %w", providers.ErrSymbolNotFound)
+		err = fmt.Errorf("bybit daily ticker: %w", exchangers.ErrSymbolNotFound)
 
 		return
 	}

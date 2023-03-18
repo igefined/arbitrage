@@ -7,7 +7,12 @@ import (
 )
 
 func (e *endpoint) Bundles() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
-		respond.Successfully(writer, "bundles")
+	return func(w http.ResponseWriter, req *http.Request) {
+		list, err := e.use.Bundles().List(req.Context())
+		if err != nil {
+			respond.Error(w, http.StatusInternalServerError, err)
+		}
+		
+		respond.Successfully(w, list)
 	}
 }
