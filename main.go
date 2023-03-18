@@ -5,8 +5,8 @@ import (
 	"github.com/igilgyrg/arbitrage/api/endpoints"
 	"github.com/igilgyrg/arbitrage/config"
 	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igilgyrg/arbitrage/schema"
 
-	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/fx"
 )
 
@@ -18,6 +18,7 @@ func main() {
 		fx.Supply(logger, cfg),
 
 		fx.Provide(
+			schema.New,
 			api.NewServer,
 			endpoints.New,
 		),

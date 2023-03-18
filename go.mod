@@ -6,7 +6,6 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/heetch/confita v0.10.0
 	github.com/jackc/pgx/v5 v5.3.1
-	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/fx v1.19.2
