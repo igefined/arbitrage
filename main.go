@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/igilgyrg/arbitrage/api"
 	"github.com/igilgyrg/arbitrage/api/endpoints"
 	"github.com/igilgyrg/arbitrage/config"
@@ -8,6 +10,7 @@ import (
 	"github.com/igilgyrg/arbitrage/schema"
 	"github.com/igilgyrg/arbitrage/use"
 	"github.com/igilgyrg/arbitrage/use/service/inspector"
+
 	"go.uber.org/fx"
 )
 
@@ -27,8 +30,9 @@ func main() {
 
 		use.Constructor(),
 
-		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder) {
+		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, inspector inspector.Service) {
 			schema.Migrate(logger, &schema.DB, qb.ConnString())
+			inspector.Inspect(context.Background())
 		}),
 	)
 

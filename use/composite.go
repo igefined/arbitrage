@@ -4,6 +4,7 @@ import (
 	"github.com/igilgyrg/arbitrage/use/internal/repo"
 	"github.com/igilgyrg/arbitrage/use/service/bundle"
 	"github.com/igilgyrg/arbitrage/use/service/inspector"
+
 	"go.uber.org/fx"
 )
 

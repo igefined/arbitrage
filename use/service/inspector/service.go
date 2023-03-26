@@ -5,21 +5,25 @@ import (
 	"strings"
 	"time"
 
-	"github.com/heetch/confita"
-	"github.com/heetch/confita/backend/env"
 	"github.com/igilgyrg/arbitrage/log"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/bybit"
+
+	"github.com/heetch/confita"
+	"github.com/heetch/confita/backend/env"
 )
 
 type Service interface {
-	Inspect(ctx context.Context) error
+	Inspect(ctx context.Context)
+
+	Symbols(ctx context.Context) ([]string, error)
 }
 
 type (
 	service struct {
-		log             *log.Logger
+		log *log.Logger
+
 		exchangers      []exchangers.Client
 		primaryExchange exchangers.Client
 	}
