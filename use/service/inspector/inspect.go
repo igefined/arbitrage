@@ -2,9 +2,11 @@ package inspector
 
 import (
 	"context"
-	"fmt"
-	"math"
+
+	"github.com/igilgyrg/arbitrage/use/domain"
 )
+
+const percentageDifference = 0
 
 type spread struct {
 	ExchangeName string
@@ -13,7 +15,8 @@ type spread struct {
 
 func (s *service) Inspect(ctx context.Context) {
 	s.log.Infof("running inspection")
-	symbols, err := s.Symbols(ctx)
+
+	activeSymbols, err := s.Symbols()
 	if err != nil {
 		s.log.Errorf("Inspector: error of getting symbols: %v", err)
 
@@ -24,9 +27,9 @@ func (s *service) Inspect(ctx context.Context) {
 		return
 	}
 
-	spreads := make(map[string][]spread, len(symbols))
+	spreads := make(map[string][]spread, len(activeSymbols))
 
-	for _, symb := range symbols {
+	for _, symb := range activeSymbols {
 		sprs := make([]spread, 0, len(s.exchangers))
 
 		for _, e := range s.exchangers {
@@ -47,11 +50,18 @@ func (s *service) Inspect(ctx context.Context) {
 	for k, v := range spreads {
 		for i := 0; i < len(v); i++ {
 			tmp := v[i]
-			for _, s := range v {
-				if tmp.Price != s.Price {
-					percent := (s.Price - tmp.Price) / tmp.Price * 100
-					if math.Abs(percent) > 1 {
-						fmt.Printf("%s: %s - %f\n", k, s.ExchangeName, s.Price)
+			for _, spr := range v {
+				if tmp.Price != spr.Price {
+					percent := (spr.Price - tmp.Price) / tmp.Price * 100
+					if percent > percentageDifference {
+						bundle := domain.Bundle{
+							Symbol:               k,
+							ExchangeFrom:         tmp.ExchangeName,
+							ExchangeTo:           spr.ExchangeName,
+							PercentageDifference: percent,
+						}
+
+						s.bundles <- bundle
 					}
 				}
 			}

@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/bybit"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers/mexc"
 
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/env"
@@ -16,8 +18,8 @@ import (
 
 type Service interface {
 	Inspect(ctx context.Context)
-
-	Symbols(ctx context.Context) ([]string, error)
+	Bundles() chan domain.Bundle
+	Symbols() ([]string, error)
 }
 
 type (
@@ -26,6 +28,8 @@ type (
 
 		exchangers      []exchangers.Client
 		primaryExchange exchangers.Client
+
+		bundles chan domain.Bundle
 	}
 
 	config struct {
@@ -50,9 +54,12 @@ func New(log *log.Logger, exchangers []exchangers.Client) Service {
 		}
 	}
 
-	return &service{log: log, exchangers: exchangers, primaryExchange: primaryExchange}
+	return &service{log: log, exchangers: exchangers, primaryExchange: primaryExchange, bundles: make(chan domain.Bundle)}
+}
+func (s *service) Bundles() chan domain.Bundle {
+	return s.bundles
 }
 
 func DefaultExchangers(log *log.Logger) []exchangers.Client {
-	return []exchangers.Client{binance.New(log), bybit.New(log)}
+	return []exchangers.Client{binance.New(log), bybit.New(log), mexc.New(log)}
 }

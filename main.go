@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	"time"
 
 	"github.com/igilgyrg/arbitrage/api"
 	"github.com/igilgyrg/arbitrage/api/endpoints"
@@ -10,11 +10,14 @@ import (
 	"github.com/igilgyrg/arbitrage/schema"
 	"github.com/igilgyrg/arbitrage/use"
 	"github.com/igilgyrg/arbitrage/use/service/inspector"
+	"github.com/igilgyrg/arbitrage/use/service/scheduler"
 
 	"go.uber.org/fx"
 )
 
 func main() {
+	ctx := config.SigTermIntCtx()
+
 	logger := log.New()
 	cfg := config.New()
 
@@ -30,9 +33,10 @@ func main() {
 
 		use.Constructor(),
 
-		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, inspector inspector.Service) {
+		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, scheduler scheduler.Service) {
 			schema.Migrate(logger, &schema.DB, qb.ConnString())
-			inspector.Inspect(context.Background())
+
+			scheduler.TemporalArbitrage(ctx, time.Minute*2)
 		}),
 	)
 

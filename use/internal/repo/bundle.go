@@ -11,6 +11,8 @@ import (
 type BundleRepository interface {
 	List(ctx context.Context) ([]dbo.Bundle, error)
 	Save(ctx context.Context, bundle *dbo.Bundle) error
+
+	Clear(ctx context.Context) error
 }
 
 type repository struct {
@@ -21,7 +23,7 @@ func New(qb *schema.QBuilder) BundleRepository {
 	return &repository{qb: qb}
 }
 
-func (r repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
+func (r *repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
 	if err = pgxscan.Select(ctx, r.qb.Querier(), &list, `select id, symbol, exchange_from, exchange_to, percentage_difference from bundles`); err != nil {
 		return
 	}
@@ -29,10 +31,16 @@ func (r repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
 	return
 }
 
-func (r repository) Save(ctx context.Context, dbo *dbo.Bundle) (err error) {
-	if _, err = r.qb.Querier().Query(ctx, "insert into bundles(symbol, exchange_from, exchange_to, percentage_difference) values($1, $2, $3, $4)", dbo.Symbol, dbo.ExchangeFrom, dbo.ExchangeTo, dbo.PercentageDifference); err != nil {
-		return
-	}
+func (r *repository) Save(ctx context.Context, dbo *dbo.Bundle) error {
+	rows, err := r.qb.Querier().Query(ctx, "insert into bundles(symbol, exchange_from, exchange_to, percentage_difference) values($1, $2, $3, $4)", dbo.Symbol, dbo.ExchangeFrom, dbo.ExchangeTo, dbo.PercentageDifference)
+	defer rows.Close()
 
-	return
+	return err
+}
+
+func (r *repository) Clear(ctx context.Context) error {
+	rows, err := r.qb.Querier().Query(ctx, "delete from bundles where id > 0")
+	defer rows.Close()
+
+	return err
 }

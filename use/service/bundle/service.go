@@ -11,6 +11,8 @@ import (
 type Service interface {
 	List(ctx context.Context) ([]domain.Bundle, error)
 	Save(ctx context.Context, bundle *domain.Bundle) error
+
+	Clear(ctx context.Context) error
 }
 
 type service struct {

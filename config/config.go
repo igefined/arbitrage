@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/heetch/confita"
@@ -11,7 +12,7 @@ import (
 type Config struct {
 	Name  string `config:"APP_NAME"`
 	Port  uint   `config:"PORT"`
-	DBUrl string `config:"DB_URL"`
+	DBUrl string `config:"DB_URL,required"`
 }
 
 func New() *Config {
@@ -22,7 +23,7 @@ func New() *Config {
 	loader := confita.NewLoader(env.NewBackend())
 	err := loader.Load(ctx, cfg)
 	if err != nil {
-		panic("config has not loaded")
+		log.Fatal("config has not loaded")
 	}
 
 	return cfg
