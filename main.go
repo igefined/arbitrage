@@ -36,7 +36,7 @@ func main() {
 		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, scheduler scheduler.Service) {
 			schema.Migrate(logger, &schema.DB, qb.ConnString())
 
-			scheduler.TemporalArbitrage(ctx, time.Minute*2)
+			scheduler.TemporalArbitrage(ctx, time.Minute*30)
 		}),
 	)
 

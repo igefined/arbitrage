@@ -24,7 +24,7 @@ func New(qb *schema.QBuilder) BundleRepository {
 }
 
 func (r *repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
-	if err = pgxscan.Select(ctx, r.qb.Querier(), &list, `select id, symbol, exchange_from, exchange_to, percentage_difference from bundles`); err != nil {
+	if err = pgxscan.Select(ctx, r.qb.Querier(), &list, `select id, symbol, exchange_from, price_from, exchange_to, price_to, percentage_difference from bundles`); err != nil {
 		return
 	}
 
@@ -32,7 +32,7 @@ func (r *repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
 }
 
 func (r *repository) Save(ctx context.Context, dbo *dbo.Bundle) error {
-	rows, err := r.qb.Querier().Query(ctx, "insert into bundles(symbol, exchange_from, exchange_to, percentage_difference) values($1, $2, $3, $4)", dbo.Symbol, dbo.ExchangeFrom, dbo.ExchangeTo, dbo.PercentageDifference)
+	rows, err := r.qb.Querier().Query(ctx, "insert into bundles(symbol, exchange_from, price_from, exchange_to, price_to, percentage_difference) values($1, $2, $3, $4, $5, $6)", dbo.Symbol, dbo.ExchangeFrom, dbo.PriceFrom, dbo.ExchangeTo, dbo.PriceTo, dbo.PercentageDifference)
 	defer rows.Close()
 
 	return err

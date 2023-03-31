@@ -57,7 +57,9 @@ func (s *service) Inspect(ctx context.Context) {
 						bundle := domain.Bundle{
 							Symbol:               k,
 							ExchangeFrom:         tmp.ExchangeName,
+							PriceFrom:            tmp.Price,
 							ExchangeTo:           spr.ExchangeName,
+							PriceTo:              spr.Price,
 							PercentageDifference: percent,
 						}
 

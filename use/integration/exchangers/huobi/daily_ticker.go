@@ -1,56 +1,70 @@
-package mexc
+package huobi
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	query := fmt.Sprintf("%s?symbol=%s", "api/v3/ticker/bookTicker", symbol)
+	query := fmt.Sprintf("%s?symbol=%s", "market/detail/merged", strings.ToLower(symbol))
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
 	if err != nil {
-		err = fmt.Errorf("mexc daily ticker request: %v", err)
-
-		return
-	}
-
-	if resp.StatusCode >= 400 && resp.StatusCode < 500 {
-		errResp := &ErrorResponse{}
-		if err = json.NewDecoder(resp.Body).Decode(errResp); err != nil {
-			err = fmt.Errorf("mexc daily ticker decoder: %v", err)
-
-			return
-		}
-
-		switch errResp.Code {
-		case -1121:
-			err = fmt.Errorf("mexc daily ticker: %w", exchangers.ErrSymbolNotFound)
-		default:
-			err = fmt.Errorf("mexc daily ticker error response: %v", errResp)
-		}
+		err = fmt.Errorf("huobi daily ticker request: %v", err)
 
 		return
 	}
 
 	if resp.StatusCode != 200 {
-		err = fmt.Errorf("mexc daily ticker response status: %s", resp.Status)
+		err = fmt.Errorf("huobi daily ticker response status: %s", resp.Status)
 
 		return
 	}
 
-	response := &DailyTickerResponse{}
-	if err = json.NewDecoder(resp.Body).Decode(response); err != nil {
-		err = fmt.Errorf("mexc daily ticker decoder: %v", err)
+	response := Response{}
+	response.Result = &DailyTickerResponse{}
+	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		err = fmt.Errorf("huobi daily ticker decoder: %v", err)
 
 		return
 	}
 
-	ticker = response.ToResponse()
+	if response.ErrCode != "" {
+		switch response.ErrCode {
+		case "invalid-parameter":
+			err = fmt.Errorf("huobi daily ticker: %w", exchangers.ErrSymbolNotFound)
+		default:
+			err = fmt.Errorf("huobi daily ticker error response: %s", response.ErrMessage)
+		}
+
+		return
+	}
+
+	if response.Result == nil {
+		err = fmt.Errorf("huobi daily ticker: nil result")
+
+		return
+	}
+
+	tickerResponse, ok := response.Result.(*DailyTickerResponse)
+	if !ok {
+		err = fmt.Errorf("huobi daily ticker decoder: cannot json decode result")
+
+		return
+	}
+
+	if len(tickerResponse.Ask) == 0 {
+		err = fmt.Errorf("huobi daily ticker: %w", exchangers.ErrSymbolNotFound)
+
+		return
+	}
+
+	ticker = tickerResponse.ToResponse(symbol)
 
 	return
 }

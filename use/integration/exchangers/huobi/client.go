@@ -1,4 +1,4 @@
-package mexc
+package huobi
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
-const ExchangeName = "mexc"
+const ExchangeName = "huobi"
 
 type (
 	client struct {
@@ -25,7 +25,8 @@ func New(logger *log.Logger) exchangers.Client {
 	}
 
 	hosts := []string{
-		"https://api.mexc.com",
+		"https://api.huobi.pro",
+		"https://api-aws.huobi.pro",
 	}
 
 	return &client{httpClient: httpClient, hosts: hosts, logger: logger}

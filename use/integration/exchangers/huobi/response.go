@@ -1,31 +1,33 @@
-package mexc
+package huobi
 
 import (
-	"strconv"
-
 	"github.com/igilgyrg/arbitrage/use/domain"
 )
 
 type (
-	DailyTickerResponse struct {
-		Symbol   string `json:"symbol"`
-		BidPrice string `json:"bidPrice"`
-		BidQty   string `json:"bidQty"`
-		AskPrice string `json:"askPrice"`
-		AskQty   string `json:"askQty"`
+	Response struct {
+		Ch         string      `json:"ch"`
+		Code       int         `json:"ts"`
+		Status     string      `json:"status"`
+		Result     interface{} `json:"tick"`
+		ErrMessage string      `json:"err-msg"`
+		ErrCode    string      `json:"err-code"`
 	}
 
-	ErrorResponse struct {
-		Code    int    `json:"code"`
-		Message string `json:"msg"`
+	DailyTickerResponse struct {
+		Id  int       `json:"id"`
+		Ask []float64 `json:"ask"`
 	}
 )
 
-func (t *DailyTickerResponse) ToResponse() *domain.DailyTicker {
-	price, _ := strconv.ParseFloat(t.AskPrice, 64)
+func (t *DailyTickerResponse) ToResponse(symbol string) *domain.DailyTicker {
+	var price float64
+	if len(t.Ask) > 0 {
+		price = t.Ask[0]
+	}
 
 	return &domain.DailyTicker{
-		Symbol: t.Symbol,
+		Symbol: symbol,
 		Price:  price,
 	}
 }

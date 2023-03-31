@@ -10,6 +10,7 @@ import (
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/bybit"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers/huobi"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/mexc"
 
 	"github.com/heetch/confita"
@@ -54,12 +55,12 @@ func New(log *log.Logger, exchangers []exchangers.Client) Service {
 		}
 	}
 
-	return &service{log: log, exchangers: exchangers, primaryExchange: primaryExchange, bundles: make(chan domain.Bundle)}
+	return &service{log: log, exchangers: exchangers, primaryExchange: primaryExchange, bundles: make(chan domain.Bundle, 1000)}
 }
 func (s *service) Bundles() chan domain.Bundle {
 	return s.bundles
 }
 
 func DefaultExchangers(log *log.Logger) []exchangers.Client {
-	return []exchangers.Client{binance.New(log), bybit.New(log), mexc.New(log)}
+	return []exchangers.Client{binance.New(log), bybit.New(log), mexc.New(log), huobi.New(log)}
 }
