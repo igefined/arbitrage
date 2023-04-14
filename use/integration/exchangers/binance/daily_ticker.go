@@ -8,6 +8,7 @@ import (
 
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
+	response2 "github.com/igilgyrg/arbitrage/use/integration/exchangers/binance/response"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
@@ -20,7 +21,7 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 	}
 
 	if resp.StatusCode >= 400 && resp.StatusCode < 500 {
-		errResp := &ErrorResponse{}
+		errResp := &response2.ErrorResponse{}
 		if err = json.NewDecoder(resp.Body).Decode(errResp); err != nil {
 			err = fmt.Errorf("binance daily ticker decoder: %v", err)
 
@@ -43,14 +44,19 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	response := &DailyTickerResponse{}
+	response := &response2.DailyTicker{}
 	if err = json.NewDecoder(resp.Body).Decode(response); err != nil {
 		err = fmt.Errorf("binance daily ticker decoder: %v", err)
 
 		return
 	}
 
-	ticker = response.ToResponse()
+	ticker = response.ToDomain()
+	if ticker.Price <= 0 {
+		err = fmt.Errorf("binance ask price is zero for crypto %s", ticker.Symbol)
+
+		return
+	}
 
 	return
 }

@@ -1,4 +1,4 @@
-package bybit
+package response
 
 import (
 	"strconv"
@@ -7,14 +7,6 @@ import (
 )
 
 type (
-	Response struct {
-		Code          int         `json:"retCode"`
-		Message       string      `json:"retMsg"`
-		Result        interface{} `json:"result"`
-		ExtensionInfo interface{} `json:"retExtInfo"`
-		Time          int64       `json:"time"`
-	}
-
 	TickerResponse struct {
 		Category string   `json:"category"`
 		List     []Ticker `json:"list"`
@@ -26,7 +18,7 @@ type (
 	}
 )
 
-func (t *Ticker) ToResponse() *domain.DailyTicker {
+func (t *Ticker) ToDomain() *domain.DailyTicker {
 	price, _ := strconv.ParseFloat(t.AskPrice, 64)
 
 	return &domain.DailyTicker{

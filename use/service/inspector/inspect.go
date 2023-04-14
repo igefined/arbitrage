@@ -2,73 +2,94 @@ package inspector
 
 import (
 	"context"
+	"fmt"
+	"strconv"
+	"sync"
 
 	"github.com/igilgyrg/arbitrage/use/domain"
 )
 
-const percentageDifference = 0
-
-type spread struct {
-	ExchangeName string
-	Price        float64
-}
+const percentageDifference = 2
 
 func (s *service) Inspect(ctx context.Context) {
 	s.log.Infof("running inspection")
-
-	activeSymbols, err := s.Symbols()
-	if err != nil {
-		s.log.Errorf("Inspector: error of getting symbols: %v", err)
-
-		return
-	}
 
 	if len(s.exchangers) < 1 {
 		return
 	}
 
-	spreads := make(map[string][]spread, len(activeSymbols))
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		activeSymbols := s.symbols.Symbols(ctx)
 
-	for _, symb := range activeSymbols {
-		sprs := make([]spread, 0, len(s.exchangers))
+		for _, symb := range activeSymbols {
+			spreadsInfo := make([]domain.SpreadInfo, 0, len(s.exchangers))
 
-		for _, e := range s.exchangers {
-			ticker, tickerErr := e.DailyTicker(ctx, symb)
-			if tickerErr != nil {
-				continue
+			for _, e := range s.exchangers {
+				ticker, tickerErr := e.DailyTicker(ctx, symb)
+				if tickerErr != nil {
+					continue
+				}
+
+				spreadsInfo = append(spreadsInfo, domain.SpreadInfo{
+					ExchangeName: e.Name(),
+					Price:        ticker.Price,
+				})
 			}
 
-			sprs = append(sprs, spread{
-				ExchangeName: e.Name(),
-				Price:        ticker.Price,
-			})
+			spread := domain.Spreads{
+				Symbol:  symb,
+				Spreads: spreadsInfo,
+			}
+
+			s.spreads <- spread
 		}
 
-		spreads[symb] = sprs
-	}
+		wg.Done()
+	}()
 
-	for k, v := range spreads {
-		for i := 0; i < len(v); i++ {
-			tmp := v[i]
-			for _, spr := range v {
-				if tmp.Price != spr.Price {
-					percent := (spr.Price - tmp.Price) / tmp.Price * 100
-					if percent > percentageDifference {
-						bundle := domain.Bundle{
-							Symbol:               k,
-							ExchangeFrom:         tmp.ExchangeName,
-							PriceFrom:            tmp.Price,
-							ExchangeTo:           spr.ExchangeName,
-							PriceTo:              spr.Price,
-							PercentageDifference: percent,
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case spread := <-s.spreads:
+				symbol := spread.Symbol
+				spreads := spread.Spreads
+
+				for i := range spreads {
+					tmp := spreads[i]
+					for _, spr := range spreads {
+						if tmp.Price != spr.Price {
+							percent := (spr.Price - tmp.Price) / tmp.Price * 100
+							percentAsString := fmt.Sprintf("%.3f", percent)
+							percentFloat, err := strconv.ParseFloat(percentAsString, 64)
+							if err != nil {
+								s.log.Error(err)
+
+								continue
+							}
+
+							if percent > percentageDifference {
+								bundle := domain.Bundle{
+									Symbol:               symbol,
+									ExchangeFrom:         tmp.ExchangeName,
+									PriceFrom:            tmp.Price,
+									ExchangeTo:           spr.ExchangeName,
+									PriceTo:              spr.Price,
+									PercentageDifference: percentFloat,
+								}
+
+								s.bundles <- bundle
+							}
 						}
-
-						s.bundles <- bundle
 					}
 				}
 			}
 		}
-	}
+	}()
 
+	wg.Wait()
 	s.log.Infof("inspection stopped")
 }

@@ -1,4 +1,4 @@
-package binance
+package response
 
 import (
 	"strconv"
@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	DailyTickerResponse struct {
+	DailyTicker struct {
 		Symbol             string `json:"symbol"`
 		PriceChange        string `json:"priceChange"`
 		PriceChangePercent string `json:"priceChangePercent"`
@@ -21,7 +21,7 @@ type (
 	}
 )
 
-func (t *DailyTickerResponse) ToResponse() *domain.DailyTicker {
+func (t *DailyTicker) ToDomain() *domain.DailyTicker {
 	price, _ := strconv.ParseFloat(t.AskPrice, 64)
 
 	return &domain.DailyTicker{

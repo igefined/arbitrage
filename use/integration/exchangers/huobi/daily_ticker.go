@@ -65,6 +65,11 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 	}
 
 	ticker = tickerResponse.ToResponse(symbol)
+	if ticker.Price <= 0 {
+		err = fmt.Errorf("huobi ask price is zero for crypto %s", ticker.Symbol)
+
+		return
+	}
 
 	return
 }

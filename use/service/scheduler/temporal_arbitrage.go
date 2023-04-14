@@ -14,7 +14,7 @@ func (s *scheduler) TemporalArbitrage(ctx context.Context, delay time.Duration) 
 			case <-time.Tick(delay):
 				err := s.bundle.Clear(ctx)
 				if err != nil {
-					s.log.Error("Scheduler: error clear bundle table: %v", err)
+					s.log.Errorf("Scheduler: error clear bundle table: %v", err)
 
 					break
 				}
@@ -36,7 +36,7 @@ func (s *scheduler) TemporalArbitrage(ctx context.Context, delay time.Duration) 
 			case bundle := <-bundles:
 				err := s.bundle.Save(ctx, &bundle)
 				if err != nil {
-					s.log.Error("Scheduler: error save bundle - %v : %v", bundle, err)
+					s.log.Errorf("Scheduler: error save bundle - %v : %v", bundle, err)
 
 					break
 				}

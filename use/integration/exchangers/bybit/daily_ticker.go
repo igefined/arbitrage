@@ -8,6 +8,7 @@ import (
 
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
+	response "github.com/igilgyrg/arbitrage/use/integration/exchangers/bybit/response"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
@@ -25,32 +26,32 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	response := Response{}
-	response.Result = &TickerResponse{}
-	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
+	responseBody := response.Response{}
+	responseBody.Result = &response.TickerResponse{}
+	if err = json.NewDecoder(resp.Body).Decode(&responseBody); err != nil {
 		err = fmt.Errorf("bybit daily ticker decoder: %v", err)
 
 		return
 	}
 
-	if response.Code != 0 {
-		switch response.Code {
+	if responseBody.Code != 0 {
+		switch responseBody.Code {
 		case 10001:
 			err = fmt.Errorf("bybit daily ticker: %w", exchangers.ErrSymbolNotFound)
 		default:
-			err = fmt.Errorf("bybit daily ticker error response: %s", response.Message)
+			err = fmt.Errorf("bybit daily ticker error response: %s", responseBody.Message)
 		}
 
 		return
 	}
 
-	if response.Result == nil {
+	if responseBody.Result == nil {
 		err = fmt.Errorf("bybit daily ticker: nil result")
 
 		return
 	}
 
-	tickerResponse, ok := response.Result.(*TickerResponse)
+	tickerResponse, ok := responseBody.Result.(*response.TickerResponse)
 	if !ok {
 		err = fmt.Errorf("bybit daily ticker decoder: cannot json decode result")
 
@@ -69,7 +70,12 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	ticker = tickerResponse.List[0].ToResponse()
+	ticker = tickerResponse.List[0].ToDomain()
+	if ticker.Price <= 0 {
+		err = fmt.Errorf("bybit ask price is zero for crypto %s", ticker.Symbol)
+
+		return
+	}
 
 	return
 }

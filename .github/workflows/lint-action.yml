@@ -1,0 +1,12 @@
+name: arbitrage_lint
+run-name: ${{ github.actor }} run linter action
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Go lint
+        run: echo "start go lint"

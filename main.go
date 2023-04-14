@@ -9,6 +9,7 @@ import (
 	"github.com/igilgyrg/arbitrage/log"
 	"github.com/igilgyrg/arbitrage/schema"
 	"github.com/igilgyrg/arbitrage/use"
+	"github.com/igilgyrg/arbitrage/use/integration/ninja"
 	"github.com/igilgyrg/arbitrage/use/service/inspector"
 	"github.com/igilgyrg/arbitrage/use/service/scheduler"
 
@@ -28,6 +29,7 @@ func main() {
 			schema.New,
 			api.NewServer,
 			endpoints.New,
+			ninja.New,
 			use.NewComposite,
 		),
 
@@ -36,7 +38,8 @@ func main() {
 		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, scheduler scheduler.Service) {
 			schema.Migrate(logger, &schema.DB, qb.ConnString())
 
-			scheduler.TemporalArbitrage(ctx, time.Minute*30)
+			scheduler.TemporalArbitrage(ctx, time.Minute*1)
+			scheduler.TemporalSymbols(ctx, time.Hour*24)
 		}),
 	)
 
