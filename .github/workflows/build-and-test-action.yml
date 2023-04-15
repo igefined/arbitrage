@@ -1,13 +1,28 @@
-name: arbitrage_build
+name: build
 run-name: ${{ github.actor }} run build and test action
 on:
-  workflow_dispatch:
-    push:
-      branches:
-        - master
+  push:
+    branches:
+      - master
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Display go version
+        run: go version
+
+      - name: Update dependencies
+        run: go mod tidy
+
+      - name: Build
+        run: go build -o dist/app main.go
+
+  test:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -21,22 +36,11 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version: '1.20'
-
-      - name: Display go version
-        run: go version
-
-      - name: Update dependencies
-        run: go mod tidy
-
-      - name: Build
-        run: go build -o dist/app main.go
-
       - name: Install test lib
         run: go install gotest.tools/gotestsum@latest
 

@@ -33,6 +33,9 @@ func (r *repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
 
 func (r *repository) Save(ctx context.Context, dbo *dbo.Bundle) error {
 	rows, err := r.qb.Querier().Query(ctx, "insert into bundles(symbol, exchange_from, price_from, exchange_to, price_to, percentage_difference) values($1, $2, $3, $4, $5, $6)", dbo.Symbol, dbo.ExchangeFrom, dbo.PriceFrom, dbo.ExchangeTo, dbo.PriceTo, dbo.PercentageDifference)
+	if err != nil {
+		return err
+	}
 	defer rows.Close()
 
 	return err
@@ -40,6 +43,9 @@ func (r *repository) Save(ctx context.Context, dbo *dbo.Bundle) error {
 
 func (r *repository) Clear(ctx context.Context) error {
 	rows, err := r.qb.Querier().Query(ctx, "delete from bundles where id > 0")
+	if err != nil {
+		return err
+	}
 	defer rows.Close()
 
 	return err

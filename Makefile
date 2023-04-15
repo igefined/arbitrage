@@ -17,6 +17,10 @@ test:
 run-local:
 	go build -o dist/app main.go && dist/app
 
+.PHONY: run-linter
+run-linter:
+	golangci-lint run
+
 .PHONY: run-local
 build:
 	docker-compose up -d --build

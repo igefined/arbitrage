@@ -6,12 +6,14 @@ import (
 )
 
 func (s *scheduler) TemporalArbitrage(ctx context.Context, delay time.Duration) {
+	ticker := time.NewTicker(delay)
+
 	go func() {
 		for {
 			select {
 			case <-ctx.Done():
 				return
-			case <-time.Tick(delay):
+			case <-ticker.C:
 				err := s.bundle.Clear(ctx)
 				if err != nil {
 					s.log.Errorf("Scheduler: error clear bundle table: %v", err)

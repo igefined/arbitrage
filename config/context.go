@@ -18,10 +18,12 @@ func SigTermIntCtx() context.Context {
 
 		ctx, cancel = context.WithCancel(context.Background())
 
-		var shutdown = make(chan os.Signal)
+		var (
+			signalsToIgnore = []os.Signal{syscall.SIGTERM, syscall.SIGINT}
+			shutdown        = make(chan os.Signal, len(signalsToIgnore))
+		)
 
-		signal.Notify(shutdown, syscall.SIGTERM)
-		signal.Notify(shutdown, syscall.SIGINT)
+		signal.Notify(shutdown, signalsToIgnore...)
 
 		go func() {
 			<-shutdown

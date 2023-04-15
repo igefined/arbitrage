@@ -26,7 +26,7 @@ func New() *Logger {
 		l.Formatter = &logrus.TextFormatter{
 			CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
 				filename := path.Base(frame.File)
-				return fmt.Sprintf("%s %d", filename, frame.Line), fmt.Sprintf("%s", frame.Function)
+				return fmt.Sprintf("%s %d", filename, frame.Line), frame.Function
 			},
 			DisableColors: false,
 			FullTimestamp: true,

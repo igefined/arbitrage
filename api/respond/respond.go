@@ -13,14 +13,15 @@ func Error(writer http.ResponseWriter, code int, err error) {
 	Respond(writer, code, err.Error())
 }
 
-func Respond(writer http.ResponseWriter, code int, data interface{}) error {
+func Respond(writer http.ResponseWriter, code int, data interface{}) {
 	writer.WriteHeader(code)
 
 	if data != nil && data != "" {
 		if err := json.NewEncoder(writer).Encode(data); err != nil {
-			return err
+			writer.WriteHeader(http.StatusInternalServerError)
+			_, _ = writer.Write([]byte(err.Error()))
+
+			return
 		}
 	}
-
-	return nil
 }

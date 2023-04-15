@@ -6,12 +6,14 @@ import (
 )
 
 func (s *scheduler) TemporalSymbols(ctx context.Context, delay time.Duration) {
+	ticker := time.NewTicker(delay)
+
 	go func() {
 		for {
 			select {
 			case <-ctx.Done():
 				return
-			case <-time.Tick(delay):
+			case <-ticker.C:
 				s.symbols.Upgrade(ctx)
 			}
 		}
