@@ -66,16 +66,16 @@ jobs:
       - name: Go linter run
         run: golangci-lint run
 
-  deploy:
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install SSH Key
-        run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa &&
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa &&
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-      - name: Connect to server and pull
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ github.event.repository.name }} && git checkout master && git pull && exit"
-      - name: SSH cleanup
-        run: rm -rf ~/.ssh
+#  deploy:
+#    needs: lint
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Install SSH Key
+#        run: |
+#          install -m 600 -D /dev/null ~/.ssh/id_rsa &&
+#          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa &&
+#          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+#      - name: Connect to server and pull
+#        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ github.event.repository.name }} && git checkout master && git pull && exit"
+#      - name: SSH cleanup
+#        run: rm -rf ~/.ssh

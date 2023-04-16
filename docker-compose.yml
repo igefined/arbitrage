@@ -14,17 +14,12 @@ services:
       - db:/var/lib/postgresql/data
 
   arbitrage:
-    container_name: arbitrage-app
-    build:
-      dockerfile: Dockerfile
-      context: .
+    build: .
+    env_file: .env
     ports:
-      - "80:8080"
+      - "80:80"
+
 
 volumes:
   db:
     driver: local
-
-networks:
-  db_network:
-    driver: bridge
