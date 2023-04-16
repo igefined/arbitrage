@@ -20,7 +20,10 @@ func (s *service) List(ctx context.Context) ([]domain.Bundle, error) {
 			Symbol:               b.Symbol,
 			ExchangeFrom:         b.ExchangeFrom,
 			ExchangeTo:           b.ExchangeTo,
+			PriceFrom:            b.PriceFrom,
+			PriceTo:              b.PriceTo,
 			PercentageDifference: b.PercentageDifference,
+			UpdatedAt:            b.UpdatedAt,
 		}
 	}
 

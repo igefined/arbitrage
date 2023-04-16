@@ -1,6 +1,11 @@
 package api
 
-import "net/http"
+import (
+	"net/http"
+	"os"
+
+	"github.com/igilgyrg/arbitrage/api/middleware"
+)
 
 func httpInterceptor(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -21,5 +26,10 @@ func httpInterceptor(next http.Handler) http.Handler {
 
 func (s *Server) mapRoutes() {
 	s.mux.Handle("/status", httpInterceptor(s.endpoints.Status()))
-	s.mux.Handle("/bundles", httpInterceptor(s.endpoints.Bundles()))
+
+	apiKey := os.Getenv("CLIENT_API_KEY")
+	if apiKey != "" {
+		accessFunc := middleware.ClientAccess(s.logger, apiKey)
+		s.mux.Handle("/bundles", httpInterceptor(accessFunc(s.endpoints.Bundles())))
+	}
 }

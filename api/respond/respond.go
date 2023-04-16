@@ -10,7 +10,13 @@ func Successfully(writer http.ResponseWriter, data interface{}) {
 }
 
 func Error(writer http.ResponseWriter, code int, err error) {
-	Respond(writer, code, err.Error())
+	out := struct {
+		Err string `json:"err"`
+	}{
+		Err: err.Error(),
+	}
+
+	Respond(writer, code, out)
 }
 
 func Respond(writer http.ResponseWriter, code int, data interface{}) {

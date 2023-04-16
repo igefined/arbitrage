@@ -1,6 +1,9 @@
 name: lint
 run-name: ${{ github.actor }} run linter action
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   lint:
@@ -16,8 +19,8 @@ jobs:
 
       - name: Go linter installation
         run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.52.2
-            && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.52.2
-            && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.52.2
+          && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.52.2
+          && wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.52.2
 
       - name: Go linter version
         run: golangci-lint --version

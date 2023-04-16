@@ -1,0 +1,24 @@
+name: deploy
+run-name: ${{ github.actor }} run deploying to Hetzner
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    if: ${{ always() && contains(needs.lint.result, 'success') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SSH Key
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa 
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Connect to server and pull
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ github.event.repository.name }} && git checkout master && git pull && exit"
+
+      - name: SSH cleanup
+        run: rm -rf ~/.ssh

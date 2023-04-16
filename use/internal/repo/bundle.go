@@ -24,7 +24,7 @@ func New(qb *schema.QBuilder) BundleRepository {
 }
 
 func (r *repository) List(ctx context.Context) (list []dbo.Bundle, err error) {
-	if err = pgxscan.Select(ctx, r.qb.Querier(), &list, `select id, symbol, exchange_from, price_from, exchange_to, price_to, percentage_difference from bundles`); err != nil {
+	if err = pgxscan.Select(ctx, r.qb.Querier(), &list, `select id, symbol, exchange_from, price_from, exchange_to, price_to, percentage_difference, updated_at from bundles`); err != nil {
 		return
 	}
 
