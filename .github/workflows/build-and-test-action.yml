@@ -23,6 +23,7 @@ jobs:
         run: go build -o dist/app main.go
 
   test:
+    needs: build
     runs-on: ubuntu-latest
     services:
       postgres:
