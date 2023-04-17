@@ -17,8 +17,8 @@ test:
 run-local:
 	go build -o dist/app main.go && dist/app
 
-.PHONY: run-linter
-run-linter:
+.PHONY: lint
+lint:
 	golangci-lint run
 
 .PHONY: run-local

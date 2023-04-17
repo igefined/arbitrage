@@ -9,6 +9,7 @@ import (
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/bybit"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/huobi"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers/kucoin"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/mexc"
 	"github.com/igilgyrg/arbitrage/use/service/symbol"
 )
@@ -36,5 +37,5 @@ func (s *service) Bundles() chan domain.Bundle {
 }
 
 func DefaultExchangers(log *log.Logger) []exchangers.Client {
-	return []exchangers.Client{binance.New(log), bybit.New(log), mexc.New(log), huobi.New(log)}
+	return []exchangers.Client{binance.New(log), bybit.New(log), mexc.New(log), huobi.New(log), kucoin.New(log)}
 }

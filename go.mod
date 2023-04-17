@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/georgysavva/scany/v2 v2.0.0
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/heetch/confita v0.10.0
 	github.com/jackc/pgx/v5 v5.3.1

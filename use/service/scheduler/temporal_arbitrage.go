@@ -3,7 +3,11 @@ package scheduler
 import (
 	"context"
 	"time"
+
+	"github.com/igilgyrg/arbitrage/use/integration/bot"
 )
+
+const chatId = 5287037408
 
 func (s *scheduler) TemporalArbitrage(ctx context.Context, delay time.Duration) {
 	ticker := time.NewTicker(delay)
@@ -14,13 +18,6 @@ func (s *scheduler) TemporalArbitrage(ctx context.Context, delay time.Duration) 
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				err := s.bundle.Clear(ctx)
-				if err != nil {
-					s.log.Errorf("Scheduler: error clear bundle table: %v", err)
-
-					break
-				}
-
 				s.inspector.Inspect(ctx)
 			}
 		}
@@ -39,6 +36,17 @@ func (s *scheduler) TemporalArbitrage(ctx context.Context, delay time.Duration) 
 				err := s.bundle.Save(ctx, &bundle)
 				if err != nil {
 					s.log.Errorf("Scheduler: error save bundle - %v : %v", bundle, err)
+
+					break
+				}
+
+				botMsg := bot.Message{
+					ChatId:  chatId,
+					Content: bundle.String(),
+				}
+				err = s.bot.Send(ctx, botMsg)
+				if err != nil {
+					s.log.Errorf("Scheduler: error send bundle to bot - %v : %v", bundle, err)
 
 					break
 				}
