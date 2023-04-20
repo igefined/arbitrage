@@ -9,6 +9,7 @@ import (
 
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
+	response2 "github.com/igilgyrg/arbitrage/use/integration/exchangers/huobi/response"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
@@ -26,8 +27,8 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	response := Response{}
-	response.Result = &DailyTickerResponse{}
+	response := response2.Response{}
+	response.Result = &response2.DailyTickerResponse{}
 	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		err = fmt.Errorf("huobi daily ticker decoder: %v", err)
 
@@ -51,7 +52,7 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	tickerResponse, ok := response.Result.(*DailyTickerResponse)
+	tickerResponse, ok := response.Result.(*response2.DailyTickerResponse)
 	if !ok {
 		err = fmt.Errorf("huobi daily ticker decoder: cannot json decode result")
 
