@@ -1,4 +1,4 @@
-package kucoin
+package usymbol
 
 import (
 	"testing"

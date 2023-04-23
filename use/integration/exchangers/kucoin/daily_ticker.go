@@ -10,10 +10,11 @@ import (
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/kucoin/response"
+	"github.com/igilgyrg/arbitrage/utils/usymbol"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	query := fmt.Sprintf("%s?symbol=%s", "api/v1/market/stats", SplitSymbol(strings.ToUpper(symbol)))
+	query := fmt.Sprintf("%s?symbol=%s", "api/v1/market/stats", usymbol.SplitSymbol(strings.ToUpper(symbol)))
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
 	if err != nil {
 		err = fmt.Errorf("kucoin daily ticker request: %v", err)
@@ -62,17 +63,4 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 	}
 
 	return
-}
-
-var availableToken = []string{"USDT", "BUSD", "USD"}
-
-func SplitSymbol(symbol string) string {
-	for _, t := range availableToken {
-		ok := strings.HasSuffix(symbol, t)
-		if ok {
-			return fmt.Sprintf("%s-%s", strings.Split(symbol, t)[0], t)
-		}
-	}
-
-	return symbol
 }

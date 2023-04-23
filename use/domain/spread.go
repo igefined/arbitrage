@@ -9,5 +9,7 @@ type (
 	SpreadInfo struct {
 		ExchangeName string
 		Price        float64
+		IsDeposit    bool
+		IsWithdraw   bool
 	}
 )

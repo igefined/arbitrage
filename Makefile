@@ -21,6 +21,6 @@ run-local:
 lint:
 	golangci-lint run
 
-.PHONY: run-local
+.PHONY: build
 build:
 	docker-compose up -d --build

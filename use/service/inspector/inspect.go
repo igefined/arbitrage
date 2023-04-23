@@ -32,9 +32,14 @@ func (s *service) Inspect(ctx context.Context) {
 					continue
 				}
 
+				isDeposit := e.IsDeposit(ctx, symb)
+				isWithdraw := e.IsWithdraw(ctx, symb)
+
 				spreadsInfo = append(spreadsInfo, domain.SpreadInfo{
 					ExchangeName: e.Name(),
 					Price:        ticker.Price,
+					IsDeposit:    isDeposit,
+					IsWithdraw:   isWithdraw,
 				})
 			}
 
@@ -72,16 +77,18 @@ func (s *service) Inspect(ctx context.Context) {
 							}
 
 							if percent > percentageDifference {
-								bundle := domain.Bundle{
-									Symbol:               symbol,
-									ExchangeFrom:         tmp.ExchangeName,
-									PriceFrom:            tmp.Price,
-									ExchangeTo:           spr.ExchangeName,
-									PriceTo:              spr.Price,
-									PercentageDifference: percentFloat,
-								}
+								if tmp.IsWithdraw && spr.IsDeposit {
+									bundle := domain.Bundle{
+										Symbol:               symbol,
+										ExchangeFrom:         tmp.ExchangeName,
+										PriceFrom:            tmp.Price,
+										ExchangeTo:           spr.ExchangeName,
+										PriceTo:              spr.Price,
+										PercentageDifference: percentFloat,
+									}
 
-								s.bundles <- bundle
+									s.bundles <- bundle
+								}
 							}
 						}
 					}
