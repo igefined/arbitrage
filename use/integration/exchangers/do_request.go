@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func DoRequest(ctx context.Context, client *http.Client, method string, hosts []string, query string, body io.Reader) (resp *http.Response, err error) {
+func DoRequest(ctx context.Context, client *http.Client, method string, hosts []string, query string, headers map[string]string, body io.Reader) (resp *http.Response, err error) {
 	if len(hosts) == 0 {
 		err = ErrUnavailable
 
@@ -22,9 +22,13 @@ func DoRequest(ctx context.Context, client *http.Client, method string, hosts []
 		return
 	}
 
+	for k, v := range headers {
+		req.Header.Add(k, v)
+	}
+
 	resp, err = client.Do(req)
 	if err != nil || resp.StatusCode >= 500 {
-		resp, err = DoRequest(ctx, client, method, hosts[1:], url, body)
+		resp, err = DoRequest(ctx, client, method, hosts[1:], url, headers, body)
 	}
 
 	return

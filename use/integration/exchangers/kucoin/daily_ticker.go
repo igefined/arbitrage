@@ -14,8 +14,10 @@ import (
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	query := fmt.Sprintf("%s?symbol=%s", "api/v1/market/stats", usymbol.SplitSymbol(strings.ToUpper(symbol)))
-	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
+	query := fmt.Sprintf("%s?symbol=%s", "api/v1/market/stats", usymbol.SeparateSymbol(strings.ToUpper(symbol), "-"))
+	headers := map[string]string{}
+
+	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
 	if err != nil {
 		err = fmt.Errorf("kucoin daily ticker request: %v", err)
 

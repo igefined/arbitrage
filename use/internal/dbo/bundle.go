@@ -11,4 +11,6 @@ type Bundle struct {
 	PriceTo              float64   `db:"price_to"`
 	PercentageDifference float64   `db:"percentage_difference"`
 	UpdatedAt            time.Time `db:"updated_at"`
+	DepositNetworks      []string  `db:"deposit_networks"`
+	WithdrawNetworks     []string  `db:"withdraw_networks"`
 }

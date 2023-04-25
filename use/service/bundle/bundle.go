@@ -15,5 +15,7 @@ func (s *service) Save(ctx context.Context, bundle *domain.Bundle) error {
 		ExchangeTo:           bundle.ExchangeTo,
 		PriceTo:              bundle.PriceTo,
 		PercentageDifference: bundle.PercentageDifference,
+		DepositNetworks:      bundle.DepositNetworks,
+		WithdrawNetworks:     bundle.WithdrawNetworks,
 	})
 }

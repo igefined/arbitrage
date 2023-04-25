@@ -14,8 +14,10 @@ type Bundle struct {
 	PriceTo              float64   `json:"price_to"`
 	PercentageDifference float64   `json:"percentage_difference"`
 	UpdatedAt            time.Time `json:"updated_at"`
+	DepositNetworks      []string  `json:"deposit_networks"`
+	WithdrawNetworks     []string  `json:"withdraw_networks"`
 }
 
 func (b *Bundle) String() string {
-	return fmt.Sprintf("SYMBOL: %s\nFROM-TO: %s-%s\nPRICES: %f-%f\nPERCENT: %f", b.Symbol, b.ExchangeFrom, b.ExchangeTo, b.PriceFrom, b.PriceTo, b.PercentageDifference)
+	return fmt.Sprintf("SYMBOL: %s\nFROM(%s)-TO(%s): %s-%s\nPRICES: %f-%f\nPERCENT: %f", b.Symbol, b.ExchangeFrom, b.DepositNetworks, b.ExchangeTo, b.WithdrawNetworks, b.PriceFrom, b.PriceTo, b.PercentageDifference)
 }

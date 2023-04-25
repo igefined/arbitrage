@@ -24,6 +24,8 @@ func (s *service) List(ctx context.Context) ([]domain.Bundle, error) {
 			PriceTo:              b.PriceTo,
 			PercentageDifference: b.PercentageDifference,
 			UpdatedAt:            b.UpdatedAt,
+			DepositNetworks:      b.DepositNetworks,
+			WithdrawNetworks:     b.WithdrawNetworks,
 		}
 	}
 

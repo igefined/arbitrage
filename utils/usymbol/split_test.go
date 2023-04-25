@@ -6,41 +6,49 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSplitSymbol(t *testing.T) {
+func TestSeparateSymbol(t *testing.T) {
 	tCases := []struct {
-		symbol   string
-		expected string
+		symbol    string
+		separator string
+		expected  string
 	}{
 		{
-			symbol:   "BTCUSDT",
-			expected: "BTC-USDT",
+			symbol:    "BTCUSDT",
+			separator: "-",
+			expected:  "BTC-USDT",
 		},
 		{
-			symbol:   "BTCUSD",
-			expected: "BTC-USD",
+			symbol:    "BTCUSD",
+			separator: "-",
+			expected:  "BTC-USD",
 		},
 		{
-			symbol:   "BTCBUSD",
-			expected: "BTC-BUSD",
+			symbol:    "BTCBUSD",
+			separator: "-",
+			expected:  "BTC-BUSD",
 		},
 		{
-			symbol:   "ETHUSDT",
-			expected: "ETH-USDT",
+			symbol:    "ETHUSDT",
+			separator: "-",
+			expected:  "ETH-USDT",
 		}, {
-			symbol:   "ETHUSD",
-			expected: "ETH-USD",
+			symbol:    "ETHUSD",
+			separator: "-",
+			expected:  "ETH-USD",
 		},
 		{
-			symbol:   "ETHBUSD",
-			expected: "ETH-BUSD",
+			symbol:    "ETHBUSD",
+			separator: "-",
+			expected:  "ETH-BUSD",
 		},
 		{
-			symbol:   "ARBBUSD",
-			expected: "ARB-BUSD",
+			symbol:    "ARBBUSD",
+			separator: "-",
+			expected:  "ARB-BUSD",
 		},
 	}
 
 	for _, c := range tCases {
-		assert.Equal(t, c.expected, SplitSymbol(c.symbol))
+		assert.Equal(t, c.expected, SeparateSymbol(c.symbol, c.separator))
 	}
 }

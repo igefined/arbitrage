@@ -16,8 +16,8 @@ var (
 
 type Client interface {
 	DailyTicker(ctx context.Context, symbol string) (*domain.DailyTicker, error)
-	IsWithdraw(ctx context.Context, symbol string) bool
-	IsDeposit(ctx context.Context, symbol string) bool
+	WithdrawNetwork(ctx context.Context, symbol string) []string
+	DepositNetwork(ctx context.Context, symbol string) []string
 
 	Name() string
 }

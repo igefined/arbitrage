@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/igilgyrg/arbitrage/use/domain"
+	"github.com/igilgyrg/arbitrage/utils/usymbol"
 )
 
 const percentageDifference = 2
@@ -32,14 +33,15 @@ func (s *service) Inspect(ctx context.Context) {
 					continue
 				}
 
-				isDeposit := e.IsDeposit(ctx, symb)
-				isWithdraw := e.IsWithdraw(ctx, symb)
+				cryptoName, _ := usymbol.Split(symb)
+				depositNetworks := e.DepositNetwork(ctx, cryptoName)
+				withdrawNetworks := e.WithdrawNetwork(ctx, cryptoName)
 
 				spreadsInfo = append(spreadsInfo, domain.SpreadInfo{
-					ExchangeName: e.Name(),
-					Price:        ticker.Price,
-					IsDeposit:    isDeposit,
-					IsWithdraw:   isWithdraw,
+					ExchangeName:     e.Name(),
+					Price:            ticker.Price,
+					DepositNetworks:  depositNetworks,
+					WithdrawNetworks: withdrawNetworks,
 				})
 			}
 
@@ -77,18 +79,18 @@ func (s *service) Inspect(ctx context.Context) {
 							}
 
 							if percent > percentageDifference {
-								if tmp.IsWithdraw && spr.IsDeposit {
-									bundle := domain.Bundle{
-										Symbol:               symbol,
-										ExchangeFrom:         tmp.ExchangeName,
-										PriceFrom:            tmp.Price,
-										ExchangeTo:           spr.ExchangeName,
-										PriceTo:              spr.Price,
-										PercentageDifference: percentFloat,
-									}
-
-									s.bundles <- bundle
+								bundle := domain.Bundle{
+									Symbol:               symbol,
+									ExchangeFrom:         tmp.ExchangeName,
+									PriceFrom:            tmp.Price,
+									ExchangeTo:           spr.ExchangeName,
+									PriceTo:              spr.Price,
+									PercentageDifference: percentFloat,
+									WithdrawNetworks:     spr.WithdrawNetworks,
+									DepositNetworks:      spr.DepositNetworks,
 								}
+
+								s.bundles <- bundle
 							}
 						}
 					}

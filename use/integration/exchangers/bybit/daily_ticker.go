@@ -13,7 +13,9 @@ import (
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
 	query := fmt.Sprintf("%s?symbol=%s&category=spot", "v5/market/tickers", symbol)
-	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, nil)
+	headers := map[string]string{}
+
+	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
 	if err != nil {
 		err = fmt.Errorf("bybit daily ticker request: %v", err)
 
