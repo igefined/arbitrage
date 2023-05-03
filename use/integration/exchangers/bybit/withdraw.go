@@ -29,13 +29,13 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
 	if err != nil {
-		err = fmt.Errorf("bybit all coins request: %v", err)
+		c.logger.Errorf("bybit all coins request: %v", err)
 
 		return
 	}
 
 	if resp.StatusCode != 200 {
-		err = fmt.Errorf("bybit all coins response status: %s", resp.Status)
+		c.logger.Errorf("bybit all coins response status: %s", resp.Status)
 
 		return
 	}
@@ -43,7 +43,7 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	responseBody := response.Response{}
 	responseBody.Result = &response.CoinInfoResp{}
 	if err = json.NewDecoder(resp.Body).Decode(&responseBody); err != nil {
-		err = fmt.Errorf("bybit query info decoder: %v", err)
+		c.logger.Errorf("bybit query info decoder: %v", err)
 
 		return
 	}
@@ -51,37 +51,37 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	if responseBody.Code != 0 {
 		switch responseBody.Code {
 		case 10001:
-			err = fmt.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
+			c.logger.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
 		case 10002:
-			err = fmt.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
+			c.logger.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
 		default:
-			err = fmt.Errorf("bybit query info error response: %s", responseBody.Message)
+			c.logger.Errorf("bybit query info error response: %s", responseBody.Message)
 		}
 
 		return
 	}
 
 	if responseBody.Result == nil {
-		err = fmt.Errorf("bybit query info: nil result")
+		c.logger.Errorf("bybit query info: nil result")
 
 		return
 	}
 
 	coinInfoResponse, ok := responseBody.Result.(*response.CoinInfoResp)
 	if !ok {
-		err = fmt.Errorf("bybit query info decoder: cannot json decode result")
+		c.logger.Errorf("bybit query info decoder: cannot json decode result")
 
 		return
 	}
 
 	if len(coinInfoResponse.Rows) == 0 {
-		err = fmt.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
+		c.logger.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
 
 		return
 	}
 
 	if len(coinInfoResponse.Rows[0].Chains) == 0 {
-		err = fmt.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
+		c.logger.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
 
 		return
 	}
@@ -94,7 +94,7 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	}
 
 	if err != nil {
-
+		c.logger.Error(err)
 	}
 
 	return

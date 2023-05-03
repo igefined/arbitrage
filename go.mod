@@ -6,6 +6,7 @@ require (
 	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/google/martian v2.1.0+incompatible
 	github.com/heetch/confita v0.10.0
 	github.com/huobirdcenter/huobi_golang v0.0.0-20210226095227-8a30a95b6d0d
 	github.com/jackc/pgx/v5 v5.3.1

@@ -8,12 +8,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/martian/log"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/bybit/response"
 	"github.com/igilgyrg/arbitrage/utils/usign"
 )
 
 func (c *client) DepositNetwork(ctx context.Context, symbol string) (networks []string) {
+	var err error
 	queryParam := fmt.Sprintf("coin=%s", symbol)
 	apiTimestamp := time.Now().UTC().UnixMilli()
 	queryToHash := fmt.Sprintf("%d%s%d%s", apiTimestamp, c.cfg.ApiKey, recvWindow, queryParam)
@@ -43,7 +45,7 @@ func (c *client) DepositNetwork(ctx context.Context, symbol string) (networks []
 	responseBody := response.Response{}
 	responseBody.Result = &response.CoinInfoResp{}
 	if err = json.NewDecoder(resp.Body).Decode(&responseBody); err != nil {
-		err = fmt.Errorf("bybit query info decoder: %v", err)
+		log.Errorf("bybit query info decoder: %v", err)
 
 		return
 	}
@@ -51,37 +53,37 @@ func (c *client) DepositNetwork(ctx context.Context, symbol string) (networks []
 	if responseBody.Code != 0 {
 		switch responseBody.Code {
 		case 10001:
-			err = fmt.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
+			c.logger.Errorf("bybit query info: %v", exchangers.ErrSymbolNotFound)
 		case 10002:
-			err = fmt.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
+			c.logger.Errorf("bybit query info: %v", exchangers.ErrSymbolNotFound)
 		default:
-			err = fmt.Errorf("bybit query info error response: %s", responseBody.Message)
+			c.logger.Errorf("bybit query info error response: %s", responseBody.Message)
 		}
 
 		return
 	}
 
 	if responseBody.Result == nil {
-		err = fmt.Errorf("bybit query info: nil result")
+		c.logger.Error("bybit query info: nil result")
 
 		return
 	}
 
 	coinInfoResponse, ok := responseBody.Result.(*response.CoinInfoResp)
 	if !ok {
-		err = fmt.Errorf("bybit query info decoder: cannot json decode result")
+		c.logger.Error("bybit query info decoder: cannot json decode result")
 
 		return
 	}
 
 	if len(coinInfoResponse.Rows) == 0 {
-		err = fmt.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
+		c.logger.Errorf("bybit query info: %v", exchangers.ErrEmptyNetworks)
 
 		return
 	}
 
 	if len(coinInfoResponse.Rows[0].Chains) == 0 {
-		err = fmt.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
+		c.logger.Errorf("bybit query info: %v", exchangers.ErrEmptyNetworks)
 
 		return
 	}
@@ -94,7 +96,7 @@ func (c *client) DepositNetwork(ctx context.Context, symbol string) (networks []
 	}
 
 	if err != nil {
-
+		c.logger.Error(err)
 	}
 
 	return

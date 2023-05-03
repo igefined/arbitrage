@@ -85,7 +85,7 @@ func (s *service) Inspect(ctx context.Context) {
 
 								for _, depN := range depositNetworks {
 									for _, withN := range withdrawNetworks {
-										if strings.ToLower(depN) == strings.ToLower(withN) {
+										if strings.EqualFold(depN, withN) {
 											bundle := domain.Bundle{
 												Symbol:               symbol,
 												ExchangeFrom:         tmp.ExchangeName,
