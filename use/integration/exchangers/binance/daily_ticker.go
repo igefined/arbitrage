@@ -8,11 +8,11 @@ import (
 
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
-	response2 "github.com/igilgyrg/arbitrage/use/integration/exchangers/binance/response"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance/response"
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	query := fmt.Sprintf("%s?symbol=%s", "api/v3/ticker/24hr", symbol)
+	query := fmt.Sprintf("%s?symbol=%s", "api/v3/ticker/price", symbol)
 	headers := map[string]string{}
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
 	if err != nil {
@@ -22,7 +22,7 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 	}
 
 	if resp.StatusCode >= 400 && resp.StatusCode < 500 {
-		errResp := &response2.ErrorResponse{}
+		errResp := &response.ErrorResponse{}
 		if err = json.NewDecoder(resp.Body).Decode(errResp); err != nil {
 			err = fmt.Errorf("binance daily ticker decoder: %v", err)
 
@@ -45,7 +45,7 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	response := &response2.DailyTicker{}
+	response := &response.DailyTicker{}
 	if err = json.NewDecoder(resp.Body).Decode(response); err != nil {
 		err = fmt.Errorf("binance daily ticker decoder: %v", err)
 

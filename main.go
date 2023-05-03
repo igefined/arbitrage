@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/igilgyrg/arbitrage/api"
@@ -10,6 +11,7 @@ import (
 	"github.com/igilgyrg/arbitrage/schema"
 	"github.com/igilgyrg/arbitrage/use"
 	"github.com/igilgyrg/arbitrage/use/integration/bot/telegram"
+	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance"
 	"github.com/igilgyrg/arbitrage/use/integration/ninja"
 	"github.com/igilgyrg/arbitrage/use/service/inspector"
 	"github.com/igilgyrg/arbitrage/use/service/scheduler"
@@ -22,6 +24,13 @@ func main() {
 
 	logger := log.New()
 	cfg := config.New()
+
+	ticker, err := binance.New(logger).DailyTicker(ctx, "ADAUSDC")
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	fmt.Println(ticker)
 
 	app := fx.New(
 		fx.Supply(logger, cfg, inspector.DefaultExchangers(logger)),
@@ -40,7 +49,7 @@ func main() {
 		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, scheduler scheduler.Service) {
 			schema.Migrate(logger, &schema.DB, qb.ConnString())
 
-			scheduler.TemporalArbitrage(ctx, time.Hour*1)
+			scheduler.TemporalArbitrage(ctx, time.Minute*1)
 			scheduler.TemporalSymbols(ctx, time.Hour*24)
 		}),
 	)

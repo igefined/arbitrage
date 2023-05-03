@@ -10,8 +10,10 @@ import (
 const ProvTimeoutSec = 5
 
 var (
-	ErrUnavailable    = errors.New("server not available")
-	ErrSymbolNotFound = errors.New("symbol not found")
+	ErrUnavailable         = errors.New("server not available")
+	ErrSymbolNotFound      = errors.New("symbol not found")
+	ErrEmptyNetworks       = errors.New("empty networks")
+	ErrInvalidApiSignature = errors.New("invalid api signature")
 )
 
 type Client interface {

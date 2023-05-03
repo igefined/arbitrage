@@ -14,7 +14,7 @@ import (
 
 const (
 	ExchangeName = "binance"
-	recvWindow   = 50_000
+	recvWindow   = 10_000
 )
 
 type (
