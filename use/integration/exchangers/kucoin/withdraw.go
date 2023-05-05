@@ -16,13 +16,13 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
 	if err != nil {
-		err = fmt.Errorf("kucoin daily ticker request: %v", err)
+		c.logger.Errorf("kucoin daily ticker request: %v", err)
 
 		return
 	}
 
 	if resp.StatusCode != 200 {
-		err = fmt.Errorf("kucoin daily ticker response status: %s", resp.Status)
+		c.logger.Errorf("kucoin daily ticker response status: %s", resp.Status)
 
 		return
 	}
@@ -30,26 +30,26 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	responseBody := response.Response{}
 	responseBody.Data = &response.CurrencyDetail{}
 	if err = json.NewDecoder(resp.Body).Decode(&responseBody); err != nil {
-		err = fmt.Errorf("kucoin daily ticker decoder: %v", err)
+		c.logger.Errorf("kucoin daily ticker decoder: %v", err)
 
 		return
 	}
 
 	if responseBody.Data == nil {
-		err = fmt.Errorf("kucoin daily ticker: nil result")
+		c.logger.Error("kucoin daily ticker: nil result")
 
 		return
 	}
 
 	currency, ok := responseBody.Data.(*response.CurrencyDetail)
 	if !ok {
-		err = fmt.Errorf("kucoin daily ticker decoder: cannot json decode result")
+		c.logger.Error("kucoin daily ticker decoder: cannot json decode result")
 
 		return
 	}
 
 	if len(currency.Chains) == 0 {
-		err = fmt.Errorf("kucoin daily ticker: %w", exchangers.ErrSymbolNotFound)
+		c.logger.Errorf("kucoin daily ticker: %v", exchangers.ErrSymbolNotFound)
 
 		return
 	}
