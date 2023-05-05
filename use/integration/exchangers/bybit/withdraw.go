@@ -75,13 +75,13 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	}
 
 	if len(coinInfoResponse.Rows) == 0 {
-		c.logger.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
+		c.logger.Errorf("bybit query info: %s", exchangers.ErrEmptyNetworks)
 
 		return
 	}
 
 	if len(coinInfoResponse.Rows[0].Chains) == 0 {
-		c.logger.Errorf("bybit query info: %w", exchangers.ErrEmptyNetworks)
+		c.logger.Errorf("bybit query info: %s", exchangers.ErrEmptyNetworks)
 
 		return
 	}
