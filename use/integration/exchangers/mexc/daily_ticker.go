@@ -12,7 +12,7 @@ import (
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	query := fmt.Sprintf("%s?symbol=%s", "api/v3/ticker/bookTicker", symbol)
+	query := fmt.Sprintf("%s?symbol=%s", "/api/v3/ticker/bookTicker", symbol)
 	headers := map[string]string{}
 
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
@@ -46,14 +46,14 @@ func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain
 		return
 	}
 
-	response := &response.DailyTickerResponse{}
-	if err = json.NewDecoder(resp.Body).Decode(response); err != nil {
+	responseBody := &response.DailyTickerResponse{}
+	if err = json.NewDecoder(resp.Body).Decode(responseBody); err != nil {
 		err = fmt.Errorf("mexc daily ticker decoder: %v", err)
 
 		return
 	}
 
-	ticker = response.ToResponse()
+	ticker = responseBody.ToResponse()
 	if ticker.Price == 0 {
 		err = fmt.Errorf("mexc ask price is zero for crypto %s", ticker.Symbol)
 

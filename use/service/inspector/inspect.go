@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/igilgyrg/arbitrage/use/domain"
@@ -80,27 +79,18 @@ func (s *service) Inspect(ctx context.Context) {
 							}
 
 							if percent > percentageDifference {
-								depositNetworks := tmp.DepositNetworks
-								withdrawNetworks := spr.WithdrawNetworks
-
-								for _, depN := range depositNetworks {
-									for _, withN := range withdrawNetworks {
-										if strings.EqualFold(depN, withN) {
-											bundle := domain.Bundle{
-												Symbol:               symbol,
-												ExchangeFrom:         tmp.ExchangeName,
-												PriceFrom:            tmp.Price,
-												ExchangeTo:           spr.ExchangeName,
-												PriceTo:              spr.Price,
-												PercentageDifference: percentFloat,
-												WithdrawNetworks:     spr.WithdrawNetworks,
-												DepositNetworks:      spr.DepositNetworks,
-											}
-
-											s.bundles <- bundle
-										}
-									}
+								bundle := domain.Bundle{
+									Symbol:               symbol,
+									ExchangeFrom:         tmp.ExchangeName,
+									PriceFrom:            tmp.Price,
+									ExchangeTo:           spr.ExchangeName,
+									PriceTo:              spr.Price,
+									PercentageDifference: percentFloat,
+									WithdrawNetworks:     spr.WithdrawNetworks,
+									DepositNetworks:      spr.DepositNetworks,
 								}
+
+								s.bundles <- bundle
 							}
 						}
 					}

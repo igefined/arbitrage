@@ -13,7 +13,7 @@ import (
 
 const (
 	ExchangeName = "bybit"
-	recvWindow   = 60_000
+	recvWindow   = 5_000
 )
 
 type (

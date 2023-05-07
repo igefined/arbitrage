@@ -21,7 +21,7 @@ func (c *client) DepositNetwork(ctx context.Context, symbol string) (networks []
 	queryToHash := fmt.Sprintf("%d%s%d%s", apiTimestamp, c.cfg.ApiKey, recvWindow, queryParam)
 	signatureHash := usign.SignRequest(queryToHash, c.cfg.SecretKey)
 
-	query := fmt.Sprintf("%s?%s", "v5/asset/coin/query-info", queryParam)
+	query := fmt.Sprintf("%s?%s", "/v5/asset/coin/query-info", queryParam)
 	headers := map[string]string{
 		"X-BAPI-API-KEY":     c.cfg.ApiKey,
 		"X-BAPI-TIMESTAMP":   strconv.Itoa(int(apiTimestamp)),

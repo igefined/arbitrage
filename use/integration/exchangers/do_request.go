@@ -14,7 +14,7 @@ func DoRequest(ctx context.Context, client *http.Client, method string, hosts []
 		return
 	}
 
-	url := fmt.Sprintf("%s/%s", hosts[0], query)
+	url := fmt.Sprintf("%s%s", hosts[0], query)
 	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		err = fmt.Errorf("error make http request: %v", err)

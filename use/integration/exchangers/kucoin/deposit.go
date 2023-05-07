@@ -11,7 +11,7 @@ import (
 )
 
 func (c *client) DepositNetwork(ctx context.Context, symbol string) (networks []string) {
-	query := fmt.Sprintf("%s/%s", "api/v2/currencies", symbol)
+	query := fmt.Sprintf("%s/%s", "/api/v2/currencies", symbol)
 	headers := map[string]string{}
 
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)

@@ -14,7 +14,7 @@ import (
 
 func (c *client) AllCoinsInfoProcessed(ctx context.Context) (err error) {
 	queryParam := fmt.Sprintf("recvWindow=%d&timestamp=%d", recvWindow, time.Now().UTC().UnixMilli())
-	query := fmt.Sprintf("%s?%s&signature=%s", "sapi/v1/capital/config/getall", queryParam, usign.SignRequest(queryParam, c.cfg.SecretKey))
+	query := fmt.Sprintf("%s?%s&signature=%s", "/sapi/v1/capital/config/getall", queryParam, usign.SignRequest(queryParam, c.cfg.SecretKey))
 	headers := map[string]string{
 		"X-MBX-APIKEY": c.cfg.ApiKey,
 	}

@@ -19,7 +19,7 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	queryToHash := fmt.Sprintf("%d%s%d%s", apiTimestamp, c.cfg.ApiKey, recvWindow, queryParam)
 	signatureHash := usign.SignRequest(queryToHash, c.cfg.SecretKey)
 
-	query := fmt.Sprintf("%s?%s", "v5/asset/coin/query-info", queryParam)
+	query := fmt.Sprintf("%s?%s", "/v5/asset/coin/query-info", queryParam)
 	headers := map[string]string{
 		"X-BAPI-API-KEY":     c.cfg.ApiKey,
 		"X-BAPI-TIMESTAMP":   strconv.Itoa(int(apiTimestamp)),
@@ -51,9 +51,9 @@ func (c *client) WithdrawNetwork(ctx context.Context, symbol string) (networks [
 	if responseBody.Code != 0 {
 		switch responseBody.Code {
 		case 10001:
-			c.logger.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
+			c.logger.Errorf("bybit query info: %v", exchangers.ErrSymbolNotFound)
 		case 10002:
-			c.logger.Errorf("bybit query info: %w", exchangers.ErrSymbolNotFound)
+			c.logger.Errorf("bybit query info: %v", exchangers.ErrSymbolNotFound)
 		default:
 			c.logger.Errorf("bybit query info error response: %s", responseBody.Message)
 		}

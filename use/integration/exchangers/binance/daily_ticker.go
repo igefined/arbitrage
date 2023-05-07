@@ -12,7 +12,7 @@ import (
 )
 
 func (c *client) DailyTicker(ctx context.Context, symbol string) (ticker *domain.DailyTicker, err error) {
-	query := fmt.Sprintf("%s?symbol=%s", "api/v3/ticker/price", symbol)
+	query := fmt.Sprintf("%s?symbol=%s", "/api/v3/ticker/price", symbol)
 	headers := map[string]string{}
 	resp, err := exchangers.DoRequest(ctx, c.httpClient, http.MethodGet, c.hosts, query, headers, nil)
 	if err != nil {
