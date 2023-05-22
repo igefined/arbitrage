@@ -7,7 +7,7 @@ import (
 
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/env"
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
@@ -19,7 +19,7 @@ type (
 		hosts      []string
 
 		cfg    *config
-		logger *log.Logger
+		logger *logger.Logger
 	}
 
 	config struct {
@@ -29,7 +29,7 @@ type (
 	}
 )
 
-func New(logger *log.Logger) exchangers.Client {
+func New(logger *logger.Logger) exchangers.Client {
 	cfg := &config{}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)

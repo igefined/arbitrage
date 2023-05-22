@@ -3,7 +3,7 @@ package inspector
 import (
 	"context"
 
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers/binance"
@@ -21,7 +21,7 @@ type Service interface {
 }
 
 type service struct {
-	log     *log.Logger
+	log     *logger.Logger
 	symbols symbol.Service
 
 	exchangers []exchangers.Client
@@ -29,7 +29,7 @@ type service struct {
 	spreads    chan domain.Spreads
 }
 
-func New(log *log.Logger, symbols symbol.Service, exchangers []exchangers.Client) Service {
+func New(log *logger.Logger, symbols symbol.Service, exchangers []exchangers.Client) Service {
 	return &service{log: log, exchangers: exchangers, symbols: symbols, bundles: make(chan domain.Bundle, 1), spreads: make(chan domain.Spreads, 1)}
 }
 
@@ -37,6 +37,6 @@ func (s *service) Bundles() chan domain.Bundle {
 	return s.bundles
 }
 
-func DefaultExchangers(log *log.Logger) []exchangers.Client {
+func DefaultExchangers(log *logger.Logger) []exchangers.Client {
 	return []exchangers.Client{binance.New(log), bybit.New(log), mexc.New(log), huobi.New(log), kucoin.New(log), okx.New(log)}
 }

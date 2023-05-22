@@ -3,8 +3,8 @@ package endpoints
 import (
 	"net/http"
 
-	"github.com/igilgyrg/arbitrage/config"
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/config"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use"
 )
 
@@ -14,11 +14,11 @@ type Endpoint interface {
 }
 
 type endpoint struct {
-	cfg    *config.Config
-	logger *log.Logger
+	cfg    *config.BaseConfig
+	logger *logger.Logger
 	use    use.UseCase
 }
 
-func New(cfg *config.Config, logger *log.Logger, use use.UseCase) Endpoint {
+func New(cfg *config.BaseConfig, logger *logger.Logger, use use.UseCase) Endpoint {
 	return &endpoint{cfg: cfg, logger: logger, use: use}
 }

@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/igilgyrg/arbitrage/log"
-
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/igdotog/core/logger"
 )
 
-func Migrate(log *log.Logger, fs *embed.FS, dbUrl string) {
+func Migrate(log *logger.Logger, fs *embed.FS, dbUrl string) {
 	source, err := iofs.New(fs, "migrations")
 	if err != nil {
 		log.Errorf("Failed to read migrations source: %s", err)

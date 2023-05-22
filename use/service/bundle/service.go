@@ -3,7 +3,7 @@ package bundle
 import (
 	"context"
 
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use/domain"
 	"github.com/igilgyrg/arbitrage/use/internal/repo"
 )
@@ -16,10 +16,10 @@ type Service interface {
 }
 
 type service struct {
-	logger *log.Logger
+	logger *logger.Logger
 	bundle repo.BundleRepository
 }
 
-func New(logger *log.Logger, bundle repo.BundleRepository) Service {
+func New(logger *logger.Logger, bundle repo.BundleRepository) Service {
 	return &service{logger: logger, bundle: bundle}
 }

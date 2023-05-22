@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use/integration/exchangers"
 )
 
@@ -15,11 +15,11 @@ type (
 		httpClient *http.Client
 		hosts      []string
 
-		logger *log.Logger
+		logger *logger.Logger
 	}
 )
 
-func New(logger *log.Logger) exchangers.Client {
+func New(logger *logger.Logger) exchangers.Client {
 	httpClient := &http.Client{
 		Timeout: exchangers.ProvTimeoutSec * time.Second,
 	}

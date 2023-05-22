@@ -19,5 +19,5 @@ type Bundle struct {
 }
 
 func (b *Bundle) String() string {
-	return fmt.Sprintf("SYMBOL: %s\nFROM(%s)-TO(%s): %s-%s\nPRICES: %f-%f\nPERCENT: %f", b.Symbol, b.ExchangeFrom, b.DepositNetworks, b.ExchangeTo, b.WithdrawNetworks, b.PriceFrom, b.PriceTo, b.PercentageDifference)
+	return fmt.Sprintf("SYMBOL: %s\nFROM(%s)-TO(%s): %s-%s\nPRICES: %f-%f\nPERCENT: %f", b.Symbol, b.ExchangeFrom, b.ExchangeTo, b.DepositNetworks, b.WithdrawNetworks, b.PriceFrom, b.PriceTo, b.PercentageDifference)
 }

@@ -8,8 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/igilgyrg/arbitrage/config"
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/config"
+	"github.com/igdotog/core/logger"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/fx"
@@ -19,7 +20,7 @@ type QBuilder struct {
 	pool *pgxpool.Pool
 }
 
-func New(log *log.Logger, cfg *config.Config, lc fx.Lifecycle) *QBuilder {
+func New(log *logger.Logger, cfg *config.BaseConfig, lc fx.Lifecycle) *QBuilder {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
@@ -55,7 +56,7 @@ func New(log *log.Logger, cfg *config.Config, lc fx.Lifecycle) *QBuilder {
 	return &QBuilder{conn}
 }
 
-func CreateDatabase(ctx context.Context, log *log.Logger, url string) {
+func CreateDatabase(ctx context.Context, log *logger.Logger, url string) {
 	dbName := GetDatabaseName(url)
 	conn, err := pgxpool.New(ctx, ReplaceDbName(url, "postgres"))
 	if err != nil {

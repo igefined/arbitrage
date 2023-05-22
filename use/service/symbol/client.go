@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use/integration/ninja"
 )
 
@@ -14,14 +14,14 @@ type Service interface {
 }
 
 type client struct {
-	log   *log.Logger
+	log   *logger.Logger
 	ninja ninja.Client
 
 	mutex   sync.RWMutex
 	symbols []string
 }
 
-func New(log *log.Logger, ninja ninja.Client) (Service, error) {
+func New(log *logger.Logger, ninja ninja.Client) (Service, error) {
 	symbols, err := ninja.CryptoSymbols(context.Background())
 	if err != nil {
 		return nil, err

@@ -8,8 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/igilgyrg/arbitrage/config"
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/config"
+	"github.com/igdotog/core/logger"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
@@ -54,10 +55,10 @@ func TestReplaceDbName(t *testing.T) {
 func TestCreateDatabase(t *testing.T) {
 	var (
 		isExists bool
-		logger   = log.New()
+		logger   = logger.New()
 	)
 
-	cfg := config.New()
+	cfg := config.NewBaseConfig(context.Background())
 	url := cfg.DBUrl
 	assert.NotEmpty(t, url)
 

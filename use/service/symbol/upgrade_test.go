@@ -19,12 +19,13 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			symbol:   "BTCUSDC",
-			expected: true,
+			expected: false,
 		},
 		{
 			symbol:   "BTCBUSDT",
 			expected: true,
 		},
+
 		{
 			symbol:   "BTCBUSD4",
 			expected: false,

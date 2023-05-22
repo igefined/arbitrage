@@ -79,18 +79,20 @@ func (s *service) Inspect(ctx context.Context) {
 							}
 
 							if percent > percentageDifference {
-								bundle := domain.Bundle{
-									Symbol:               symbol,
-									ExchangeFrom:         tmp.ExchangeName,
-									PriceFrom:            tmp.Price,
-									ExchangeTo:           spr.ExchangeName,
-									PriceTo:              spr.Price,
-									PercentageDifference: percentFloat,
-									WithdrawNetworks:     spr.WithdrawNetworks,
-									DepositNetworks:      spr.DepositNetworks,
-								}
+								if len(spr.DepositNetworks) != 0 && len(spr.WithdrawNetworks) != 0 {
+									bundle := domain.Bundle{
+										Symbol:               symbol,
+										ExchangeFrom:         tmp.ExchangeName,
+										PriceFrom:            tmp.Price,
+										ExchangeTo:           spr.ExchangeName,
+										PriceTo:              spr.Price,
+										PercentageDifference: percentFloat,
+										WithdrawNetworks:     spr.WithdrawNetworks,
+										DepositNetworks:      spr.DepositNetworks,
+									}
 
-								s.bundles <- bundle
+									s.bundles <- bundle
+								}
 							}
 						}
 					}

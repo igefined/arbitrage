@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/api/respond"
-	"github.com/igilgyrg/arbitrage/log"
 )
 
 var (
@@ -13,7 +13,7 @@ var (
 	ErrAccessDenied            = errors.New("access denied")
 )
 
-func ClientAccess(log *log.Logger, validKey string) func(http.Handler) http.Handler {
+func ClientAccess(log *logger.Logger, validKey string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			apiKeyFromHeader, err := ApiKeyExtractor(r)

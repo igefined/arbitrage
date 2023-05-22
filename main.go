@@ -3,10 +3,10 @@ package main
 import (
 	"time"
 
+	"github.com/igdotog/core/config"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/api"
 	"github.com/igilgyrg/arbitrage/api/endpoints"
-	"github.com/igilgyrg/arbitrage/config"
-	"github.com/igilgyrg/arbitrage/log"
 	"github.com/igilgyrg/arbitrage/schema"
 	"github.com/igilgyrg/arbitrage/use"
 	"github.com/igilgyrg/arbitrage/use/integration/bot/telegram"
@@ -20,11 +20,11 @@ import (
 func main() {
 	ctx := config.SigTermIntCtx()
 
-	logger := log.New()
-	cfg := config.New()
+	log := logger.New()
+	cfg := config.NewBaseConfig(ctx)
 
 	app := fx.New(
-		fx.Supply(logger, cfg, inspector.DefaultExchangers(logger)),
+		fx.Supply(log, cfg, inspector.DefaultExchangers(log)),
 
 		fx.Provide(
 			schema.New,
@@ -38,7 +38,7 @@ func main() {
 		use.Constructor(),
 
 		fx.Invoke(func(_ *api.Server, qb *schema.QBuilder, scheduler scheduler.Service) {
-			schema.Migrate(logger, &schema.DB, qb.ConnString())
+			schema.Migrate(log, &schema.DB, qb.ConnString())
 
 			scheduler.TemporalArbitrage(ctx, time.Minute*1)
 			scheduler.TemporalSymbols(ctx, time.Hour*24)

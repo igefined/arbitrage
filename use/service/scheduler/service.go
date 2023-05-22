@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/use/integration/bot"
 	"github.com/igilgyrg/arbitrage/use/service/bundle"
 	"github.com/igilgyrg/arbitrage/use/service/inspector"
@@ -17,7 +17,7 @@ type Service interface {
 }
 
 type scheduler struct {
-	log *log.Logger
+	log *logger.Logger
 
 	inspector inspector.Service
 	bundle    bundle.Service
@@ -25,6 +25,6 @@ type scheduler struct {
 	bot       bot.Client
 }
 
-func New(log *log.Logger, inspector inspector.Service, bundle bundle.Service, symbols symbol.Service, bot bot.Client) Service {
+func New(log *logger.Logger, inspector inspector.Service, bundle bundle.Service, symbols symbol.Service, bot bot.Client) Service {
 	return &scheduler{log: log, inspector: inspector, bundle: bundle, symbols: symbols, bot: bot}
 }

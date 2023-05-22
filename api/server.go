@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/igdotog/core/config"
+	"github.com/igdotog/core/logger"
 	"github.com/igilgyrg/arbitrage/api/endpoints"
-	"github.com/igilgyrg/arbitrage/config"
-	"github.com/igilgyrg/arbitrage/log"
 
 	"go.uber.org/fx"
 )
@@ -15,14 +15,14 @@ import (
 type Server struct {
 	mux *http.ServeMux
 
-	cfg       *config.Config
-	logger    *log.Logger
+	cfg       *config.BaseConfig
+	logger    *logger.Logger
 	endpoints endpoints.Endpoint
 }
 
 func NewServer(
-	cfg *config.Config,
-	logger *log.Logger,
+	cfg *config.BaseConfig,
+	logger *logger.Logger,
 	endpoints endpoints.Endpoint,
 	lc fx.Lifecycle,
 ) *Server {

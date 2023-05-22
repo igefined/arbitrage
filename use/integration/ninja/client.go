@@ -7,7 +7,7 @@ import (
 
 	"github.com/heetch/confita"
 	"github.com/heetch/confita/backend/env"
-	"github.com/igilgyrg/arbitrage/log"
+	"github.com/igdotog/core/logger"
 )
 
 const defaultEndpoint = "https://api.api-ninjas.com"
@@ -23,14 +23,14 @@ type (
 	}
 
 	client struct {
-		log *log.Logger
+		log *logger.Logger
 		cfg *config
 
 		httpClient *http.Client
 	}
 )
 
-func New(log *log.Logger) (Client, error) {
+func New(log *logger.Logger) (Client, error) {
 	cfg := &config{
 		Endpoint: defaultEndpoint,
 		// ApiKey

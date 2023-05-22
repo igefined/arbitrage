@@ -1,4 +1,4 @@
-export GO11MODULE=true
+export GO111MODULE=on
 
 ifneq (,$(wildcard .env))
 	include .env

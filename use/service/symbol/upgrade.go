@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+var exceptCoins = []string{"BNTUSDT"}
+
 func (c *client) Upgrade(ctx context.Context) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -22,7 +24,7 @@ func (c *client) Upgrade(ctx context.Context) {
 
 	tempSymbols := make([]string, 0, len(symbols))
 	for _, symbol := range symbols {
-		if validate(symbol) {
+		if validate(symbol) && !except(symbol) {
 			tempSymbols = append(tempSymbols, symbol)
 		}
 	}
@@ -33,8 +35,17 @@ func (c *client) Upgrade(ctx context.Context) {
 func validate(symbol string) (out bool) {
 	out = strings.HasSuffix(symbol, "USD")
 	out = out || strings.HasSuffix(symbol, "USDT")
-	out = out || strings.HasSuffix(symbol, "USDC")
 	out = out || strings.HasSuffix(symbol, "BUSD")
 
 	return
+}
+
+func except(symbol string) bool {
+	for _, ec := range exceptCoins {
+		if strings.EqualFold(symbol, ec) {
+			return true
+		}
+	}
+
+	return false
 }
